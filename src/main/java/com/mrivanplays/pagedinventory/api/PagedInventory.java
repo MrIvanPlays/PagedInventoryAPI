@@ -34,19 +34,37 @@ public interface PagedInventory {
    * Retrieves the page specified.
    *
    * @param page the page you want to retrieve
-   * @return empty optional if page wasn't found, or optional with value
+   * @return empty optional if page wasn't found, or else optional with value
    */
   @NotNull
   Optional<Page> getPage(int page);
 
   /**
+   * Retrieves the page by the specified page uuid
+   *
+   * @param page page uuid
+   * @return empty optional if page wasn't found, or else optional with value
+   */
+  @NotNull
+  Optional<Page> getPage(@NotNull UUID page);
+
+  /**
    * Retrieves the page number of the page specified.
    *
-   * @param page the page object you want to
+   * @param page the page object you want to get numbe
    * @return number of the page if present
    */
   @NotNull
   OptionalInt getPageNumber(@NotNull Page page);
+
+  /**
+   * Retrieves the page number of the page uuid specified
+   *
+   * @param page page uuid
+   * @return number of the page if present
+   */
+  @NotNull
+  OptionalInt getPageNumber(@NotNull UUID page);
 
   /**
    * Adds a {@link Page} to this {@link PagedInventory}
@@ -135,12 +153,13 @@ public interface PagedInventory {
   Optional<Page> getPageViewed(@NotNull Player viewer);
 
   /**
-   * Returns a immutable map of the known viewers and the viewed pages.
+   * Returns a immutable map of the known viewers and the viewed pages, key being a {@link Player}'s
+   * {@link UUID}, and value being a {@link Page}'s {@link UUID}
    *
    * @return viewers
    */
   @NotNull
-  Map<UUID, Page> getViewers();
+  Map<UUID, UUID> getViewers();
 
   /**
    * Returns the {@link UUID UniqueId} of this {@link PagedInventory}, in case you want to store it

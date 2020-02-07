@@ -23,7 +23,7 @@ public class PagedInventoryImpl implements PagedInventory {
 
   private Map<Integer, Page> pages;
   private Map<Integer, NavigationItem> navigationItems;
-  private Map<UUID, Page> viewers;
+  private Map<UUID, UUID> viewers;
   private Set<Consumer<PageClick>> clickFunctions;
   private PageSwitchRegistrar switchRegistrar;
   private UUID pagedInentoryUUID;
@@ -50,11 +50,26 @@ public class PagedInventoryImpl implements PagedInventory {
   }
 
   @Override
+  public @NotNull Optional<Page> getPage(@NotNull UUID page) {
+    Preconditions.checkNotNull(page, "page");
+    return pages.values().stream().filter(v -> v.getPageUUID().equals(page)).findFirst();
+  }
+
+  @Override
   @NotNull
   public OptionalInt getPageNumber(@NotNull Page page) {
     Preconditions.checkNotNull(page, "page");
     return pages.entrySet().stream()
         .filter(entry -> entry.getValue().getPageUUID().equals(page.getPageUUID()))
+        .mapToInt(Entry::getKey)
+        .findFirst();
+  }
+
+  @Override
+  public @NotNull OptionalInt getPageNumber(@NotNull UUID page) {
+    Preconditions.checkNotNull(page, "page");
+    return pages.entrySet().stream()
+        .filter(entry -> entry.getValue().getPageUUID().equals(page))
         .mapToInt(Entry::getKey)
         .findFirst();
   }
@@ -136,9 +151,9 @@ public class PagedInventoryImpl implements PagedInventory {
 
   private void open(Player player, Page page) {
     if (!viewers.containsKey(player.getUniqueId())) {
-      viewers.put(player.getUniqueId(), page);
+      viewers.put(player.getUniqueId(), page.getPageUUID());
     } else {
-      viewers.replace(player.getUniqueId(), page);
+      viewers.replace(player.getUniqueId(), page.getPageUUID());
       switchRegistrar.register(player.getUniqueId());
     }
     try {
@@ -182,14 +197,14 @@ public class PagedInventoryImpl implements PagedInventory {
   public Optional<Page> getPageViewed(@NotNull Player viewer) {
     Preconditions.checkNotNull(viewer, "viewer");
     if (viewers.containsKey(viewer.getUniqueId())) {
-      return Optional.of(viewers.get(viewer.getUniqueId()));
+      return getPage(viewers.get(viewer.getUniqueId()));
     }
     return Optional.empty();
   }
 
   @Override
   @NotNull
-  public Map<UUID, Page> getViewers() {
+  public Map<UUID, UUID> getViewers() {
     return Collections.unmodifiableMap(viewers);
   }
 
