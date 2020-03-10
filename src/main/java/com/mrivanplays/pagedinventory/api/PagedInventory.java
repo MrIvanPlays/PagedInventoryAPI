@@ -31,6 +31,13 @@ public interface PagedInventory {
   void addOnClickFunction(@NotNull Consumer<PageClick> onClick);
 
   /**
+   * Adds a close listener, when a {@link Page} got closed.
+   *
+   * @param onClose on close function
+   */
+  void addOnCloseFunction(@NotNull Consumer<PageClose> onClose);
+
+  /**
    * Retrieves the page specified.
    *
    * @param page the page you want to retrieve

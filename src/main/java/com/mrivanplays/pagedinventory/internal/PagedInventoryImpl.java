@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mrivanplays.pagedinventory.api.NavigationItem;
 import com.mrivanplays.pagedinventory.api.Page;
 import com.mrivanplays.pagedinventory.api.PageClick;
+import com.mrivanplays.pagedinventory.api.PageClose;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +26,7 @@ public class PagedInventoryImpl implements PagedInventory {
   private Map<Integer, NavigationItem> navigationItems;
   private Map<UUID, UUID> viewers;
   private Set<Consumer<PageClick>> clickFunctions;
+  private Set<Consumer<PageClose>> closeFunctions;
   private PageSwitchRegistrar switchRegistrar;
   private UUID pagedInentoryUUID;
 
@@ -33,6 +35,7 @@ public class PagedInventoryImpl implements PagedInventory {
     this.navigationItems = new ConcurrentHashMap<>();
     this.viewers = new ConcurrentHashMap<>();
     clickFunctions = new HashSet<>();
+    closeFunctions = new HashSet<>();
     switchRegistrar = new PageSwitchRegistrar();
     this.pagedInentoryUUID = UUID.randomUUID();
   }
@@ -41,6 +44,12 @@ public class PagedInventoryImpl implements PagedInventory {
   public void addOnClickFunction(@NotNull Consumer<PageClick> onClick) {
     Preconditions.checkNotNull(onClick, "onClick");
     clickFunctions.add(onClick);
+  }
+
+  @Override
+  public void addOnCloseFunction(@NotNull Consumer<PageClose> onClose) {
+    Preconditions.checkNotNull(onClose, "onClose");
+    closeFunctions.add(onClose);
   }
 
   @Override
@@ -77,6 +86,12 @@ public class PagedInventoryImpl implements PagedInventory {
   void callClickFunctions(PageClick clickObj) {
     for (Consumer<PageClick> listener : clickFunctions) {
       listener.accept(clickObj);
+    }
+  }
+
+  void callCloseFunctions(PageClose closeObj) {
+    for (Consumer<PageClose> listener : closeFunctions) {
+      listener.accept(closeObj);
     }
   }
 
@@ -161,6 +176,10 @@ public class PagedInventoryImpl implements PagedInventory {
     } finally {
       switchRegistrar.unregister(player.getUniqueId());
     }
+  }
+
+  PageSwitchRegistrar getSwitchRegistrar() {
+    return switchRegistrar;
   }
 
   @Override

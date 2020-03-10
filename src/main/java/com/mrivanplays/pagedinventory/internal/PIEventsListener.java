@@ -3,6 +3,7 @@ package com.mrivanplays.pagedinventory.internal;
 import com.mrivanplays.pagedinventory.api.NavigationItem;
 import com.mrivanplays.pagedinventory.api.Page;
 import com.mrivanplays.pagedinventory.api.PageClick;
+import com.mrivanplays.pagedinventory.api.PageClose;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,7 +71,16 @@ public class PIEventsListener implements Listener {
 
   @EventHandler
   public void onClose(InventoryCloseEvent event) {
-    impl.removeViewer((Player) event.getPlayer());
+    Player player = (Player) event.getPlayer();
+    Optional<Page> pageViewed = impl.getPageViewed(player);
+    if (!pageViewed.isPresent()) {
+      return;
+    }
+    if (impl.getSwitchRegistrar().isSwitching(player.getUniqueId())) {
+      return;
+    }
+    impl.callCloseFunctions(new PageClose(player, impl, pageViewed.get()));
+    impl.removeViewer(player);
   }
 
   @EventHandler

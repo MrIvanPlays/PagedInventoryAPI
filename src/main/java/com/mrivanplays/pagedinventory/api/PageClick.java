@@ -7,10 +7,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a object, created when {@link org.bukkit.event.inventory.InventoryClickEvent} was
- * fired. You can make use of click events in paged inventories by usig {@link
+ * fired. You can make use of click events in paged inventories by using {@link
  * PagedInventory#addOnClickFunction(java.util.function.Consumer)}
  */
 public final class PageClick {
@@ -68,7 +69,7 @@ public final class PageClick {
    *
    * @return item
    */
-  @NotNull
+  @Nullable
   public ItemStack getClickedItem() {
     return clickedItem;
   }
