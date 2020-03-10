@@ -84,6 +84,18 @@ public class PagedInventoryBuilder {
   }
 
   /**
+   * Adds a close function to listen for close events on the inventories.
+   *
+   * @param closeListener close listener
+   * @return this instance for chaining
+   */
+  @NotNull
+  public PagedInventoryBuilder closeFunction(@NotNull Consumer<PageClose> closeListener) {
+    parent.addOnCloseFunction(closeListener);
+    return this;
+  }
+
+  /**
    * Builds into a {@link PagedInventory}
    *
    * @return paged inventory
